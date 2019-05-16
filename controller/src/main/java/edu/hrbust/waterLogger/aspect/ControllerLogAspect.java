@@ -18,7 +18,7 @@ import java.util.Arrays;
 @Component
 @Order(0)
 public class ControllerLogAspect {
-    @Pointcut("execution(public * com.aracg.idcard_ocr.controller..*.*(..))")
+    @Pointcut("execution(public * edu.hrbust.waterLogger.controller..*.*(..))")
     public void controllerPoint() {}
 
     @Around("controllerPoint()")

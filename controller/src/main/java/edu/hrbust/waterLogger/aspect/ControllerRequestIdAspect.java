@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Order(-10)
 public class ControllerRequestIdAspect {
-    @Pointcut("execution(public * com.aracg.idcard_ocr.controller..*.*(..))")
+    @Pointcut("execution(public * edu.hrbust.waterLogger.controller..*.*(..))")
     public void controllerPoint() {
     }
 
