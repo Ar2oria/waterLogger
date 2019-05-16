@@ -10,21 +10,14 @@ import lombok.Data;
  */
 @Data
 public class WaterDataChgVO {
-    private String appId;
     private String notifyType;
-    private Content content;
+    private String deviceId;
+    private String gatewayId;
+    private String requestId;
+    private Service service;
 
     @lombok.Data
-    public static class Content{
-        private String notifyType;
-        private String deviceId;
-        private String gatewayId;
-        private String requestId;
-        private Service service;
-    }
-
-    @lombok.Data
-    public static class Service{
+    public static class Service {
         private String serviceId;
         private String serviceType;
         private Data data;
@@ -32,7 +25,7 @@ public class WaterDataChgVO {
     }
 
     @lombok.Data
-    public static class Data{
+    public static class Data {
         private String ntu;
         private Integer m;
     }
