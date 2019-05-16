@@ -19,7 +19,7 @@ public class WaterLoggerServiceImpl implements IWaterLoggerService {
     public void change(WaterDataChgVO waterDateChgVO) {
         //todo
 
-        log.info(waterDateChgVO.getAppId());
+        log.info(waterDateChgVO.getNotifyType());
 
     }
 }
