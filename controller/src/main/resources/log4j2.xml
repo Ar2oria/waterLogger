@@ -1,0 +1,127 @@
+<Configuration status="INFO">
+
+    <properties>
+        <property name="group">edu.hrbust</property>
+        <property name="project">waterLogger</property>
+        <property name="invLogHome">log/apps</property>
+        <property name="logHome">${invLogHome}/${group}/${project}</property>
+    </properties>
+
+    <Appenders>
+
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p] %X{requestId} [%t] %c{2.} - %m%n%ex"/>
+            <!--<PatternLayout>-->
+            <!--<Pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} [%level] ${group}/${project} -%X{filter} &lt;%t|%C{1.}.%M(%L)&gt; -%X{requestId} %m%n%ex</Pattern>-->
+            <!--</PatternLayout>-->
+        </Console>
+
+        <RollingFile name="infoAppender" fileName="${logHome}/${project}-info.log" filePattern="${logHome}/${project}-info.log.%d{yyyy-MM-dd}">
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} [%level] ${group}/${project} -%X{filter} &lt;%t|%C{1.}.%M(%L)&gt; -%X{requestId} %m%n%ex</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <!--删除超过7天的日志-->
+            <DefaultRolloverStrategy>
+                <Delete basePath="${logHome}" maxDepth="1">
+                    <IfFileName glob="${project}-info.log.*" />
+                    <IfLastModified age="7d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <RollingFile name="warnAppender" fileName="${logHome}/${project}-warn.log" filePattern="${logHome}/${project}-warn.log.%d{yyyy-MM-dd}">
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} [%level] ${group}/${project} -%X{filter} &lt;%t|%C{1.}.%M(%L)&gt; -%X{requestId} %m%n%ex</Pattern>
+            </PatternLayout>
+            <Filters>
+                <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${logHome}" maxDepth="1">
+                    <IfFileName glob="${project}-warn.log.*" />
+                    <IfLastModified age="7d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <RollingFile name="errorAppender" fileName="${logHome}/${project}-error.log" filePattern="${logHome}/${project}-error.log.%d{yyyy-MM-dd}">
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} [%level] ${group}/${project} -%X{filter} &lt;%t|%C{1.}.%M(%L)&gt; -%X{requestId} %m%n%ex</Pattern>
+            </PatternLayout>
+            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${logHome}" maxDepth="1">
+                    <IfFileName glob="${project}-error.log.*" />
+                    <IfLastModified age="7d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+        <!-- sql日志 -->
+        <RollingFile name="druidSqlAppender" fileName="${logHome}/${project}-sql.log" filePattern="${logHome}/${project}-sql.log.%d{yyyy-MM-dd}">
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} [%level] ${group}/${project} -%X{filter} &lt;%t|%C{1.}.%M(%L)&gt; -%X{requestId} %m%n%ex</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${logHome}" maxDepth="1">
+                    <IfFileName glob="${project}-sql.log.*" />
+                    <IfLastModified age="7d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+        <!-- 调用日志  这个是kibana抓取的日志文件，一定要全量的-->
+        <RollingFile name="invokeAppender" fileName="${invLogHome}/${project}-invoke.log" filePattern="${logHome}/${project}-invoke.log.%d{yyyy-MM-dd}">
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} [%level] ${group}/${project} -%X{filter} &lt;%t|%C{1.}.%M(%L)&gt; -%X{requestId} %m%n%ex</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${logHome}" maxDepth="1">
+                    <IfFileName glob="${project}-invoke.log.*" />
+                    <IfLastModified age="7d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="infoAppender"/>
+            <AppenderRef ref="warnAppender"/>
+            <AppenderRef ref="errorAppender"/>
+            <AppenderRef ref="invokeAppender"/>
+        </Root>
+        <!-- druid日志 -->
+        <logger name="druid.sql.Statement" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="druidSqlAppender"/>
+            <!--<AppenderRef ref="invokeAppender"/>-->
+        </logger>
+        <logger name="druid.sql.ResultSet" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="druidSqlAppender"/>
+            <!--<AppenderRef ref="invokeAppender"/>-->
+        </logger>
+        <!-- 调用日志 -->
+        <logger name="edu.hrbust" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="invokeAppender"/>
+        </logger>
+    </Loggers>
+
+</Configuration>
